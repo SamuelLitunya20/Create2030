@@ -1,0 +1,128 @@
+import ts3
+
+# Replace with your server address and port
+server_address = "your_server_address"
+port = 10011  # Default port for query, replace if needed
+
+try:
+    ts3conn = ts3.query.TS3Connection(server_address, port)
+    ts3conn.login(client_login_name="serveradmin", client_login_password="password")
+    ts3conn.use(sid=1)  # Replace with your server ID
+    # Now you can interact with the server
+except ts3.query.TS3QueryError as e:
+    print(f"An error occurred: {e}")
+finally:
+    ts3conn.quit()
+
+
+
+ts3conn.login(client_login_name="username",
+client_login_password="password")
+ts3conn.use(sid=1) #select the server instance
+
+
+import ts3
+
+# Connect to the TeamSpeak 3 server
+server_address = "your_server_address"
+port = 10011  # Default port for query
+
+try:
+    ts3conn = ts3.query.TS3Connection(server_address, port)
+    ts3conn.login(client_login_name="serveradmin", client_login_password="password")
+    ts3conn.use(sid=1)  # Replace with your server ID
+
+    # Parameters
+    client_id = 123  # Replace with the actual client ID
+    channel_id = 456  # Replace with the actual channel ID
+
+    # Move the client to the specified channel
+    ts3conn.exec_("clientmove", clid=client_id, cid=channel_id)
+    print(f"Client {client_id} moved to channel {channel_id}")
+
+except ts3.query.TS3QueryError as e:
+    print(f"An error occurred: {e}")
+finally:
+    ts3conn.quit()
+
+
+
+ts3conn.servernotifyregister(event="textserver")
+
+
+def handle_message(message):
+    #Process the message pass
+
+    while True:
+        event=ts3conn.wait_for_event()
+        if event.event =="textmessage":
+            handle_message
+
+
+import pyaudio
+import wave
+
+#Setup audio recording
+audio = pyaudio.PyAudio()
+stream = audio.open(format=pyaudio.paInt16,
+channels=1, rate=44100, input=True,
+frames_per_buffer=1024)
+
+frames=[]
+
+import pyaudio
+import wave
+
+# Parameters
+sample_rate = 44100  # Sampling rate in Hz
+chunk_size = 1024    # Number of frames per buffer
+duration_in_seconds = 5  # Duration of recording
+
+# Initialize PyAudio
+p = pyaudio.PyAudio()
+
+# Open a stream
+stream = p.open(format=pyaudio.paInt16,
+                channels=1,
+                rate=sample_rate,
+                input=True,
+                frames_per_buffer=chunk_size)
+
+print("Recording...")
+
+# List to hold audio frames
+frames = []
+
+# Read audio data in chunks
+for _ in range(int(sample_rate / chunk_size * duration_in_seconds)):
+    data = stream.read(chunk_size)
+    frames.append(data)
+
+print("Recording finished.")
+
+# Stop and close the stream
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+# Save the recorded data to a file
+output_filename = "output.wav"
+with wave.open(output_filename, 'wb') as wf:
+    wf.setnchannels(1)
+    wf.setsampwidth(pyaudio.PyAudio().get_sample_size(pyaudio.paInt16))
+    wf.setframerate(sample_rate)
+    wf.writeframes(b''.join(frames))
+
+print(f"Audio data saved to {output_filename}")
+
+stream.stop_stream()
+stream.close()
+audio.terminate()
+
+#Save to file
+with wave.open('output.wav', 'wb') as wf:
+    wf.setnchannels(1)
+
+wf.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+wf.setframerate(44100)
+wf.writeframes(b".join(frames)")
