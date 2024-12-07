@@ -1,0 +1,60 @@
+Discord Trading Bot: A Python bot that fetches price data from stntrading.eu and backpack.classifieds, compares buying and selling prices, and alerts Discord users if the prices are within 10% of each other.
+ Discord Trading Bot
+
+This Python-based bot fetches live market data from [stntrading.eu](https://stntrading.eu) and [backpack.classifieds](https://backpack.classifieds), compares buying and selling prices, and sends a "Good deal found" message to a Discord server if the prices are within 10% of each other. It allows users to stay informed about potentially profitable deals in real time.
+
+ Features
+- Fetches buying and selling prices from [stntrading.eu](https://stntrading.eu) and [backpack.classifieds](https://backpack.classifieds).
+- Compares the prices and checks if they are within 10% of each other.
+- Sends an alert to a specified Discord channel when a "good deal" is found.
+- Easily configurable to suit different trading strategies.
+
+ Setup & Installation
+
+ Prerequisites
+Before running the bot, make sure you have:
+- Python 3.x installed on your machine.
+- A [Discord bot token](https://discord.com/developers/docs/intro).
+- Internet access for fetching data from the APIs.
+
+ Installation Steps
+
+1. Clone the repository:
+
+   git clone https://github.com/yourusername/discord-trading-bot.git
+   cd discord-trading-bot
+
+Install dependencies: Create a virtual environment (optional, but recommended):
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+Install required Python libraries:
+pip install -r requirements.txt
+
+Configure the bot:
+
+Create a .env file in the project root to store your sensitive credentials
+DISCORD_TOKEN=your_discord_bot_token
+
+Run the bot: Start the bot by running
+python bot.py
+
+Customization
+Discord Channel: Modify the channel ID in the code where the bot sends messages to a Discord channel.
+Price Comparison: The bot compares the prices fetched from stntrading.eu and backpack.classifieds. You can adjust the percentage threshold (currently set to 10%) for what is considered a "good deal".
+
+How It Works
+The bot fetches current market prices from both stntrading.eu and backpack.classifieds.
+It compares the buying and selling prices for each item.
+If the prices are within 10% of each other, it sends an alert message to a Discord channel saying "Good deal found!".
+
+Usage
+Once the bot is running, it will fetch data at regular intervals and send a message to your Discord channel if it detects a "good deal."
+
+Contributing
+If you'd like to contribute to the project, feel free to fork the repository and submit a pull request. Please ensure your code follows the existing style and passes all tests. You can also reach out to me via email leetunya41@gmail.com
+
+Acknowledgments
+stntrading.eu for the market data.
+backpack.classifieds for the marketplace data.
+Discord.py for interacting with the Discord API.
