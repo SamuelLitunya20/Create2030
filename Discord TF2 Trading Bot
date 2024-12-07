@@ -58,3 +58,179 @@ Acknowledgments
 stntrading.eu for the market data.
 backpack.classifieds for the marketplace data.
 Discord.py for interacting with the Discord API.
+
+Python Code
+import discord
+import requests
+from discord.ext import commands
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
+
+ #Define the intents you need
+intents = discord.Intents.default()
+
+# Set up the client and token
+client = discord.Client()
+
+# Create the bot client
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+
+# Run the bot
+bot.run('bot token')
+
+# Set up the Discord channel and user to notify
+channel_id = 1311295325499166743
+user_id = 107449672733372416
+
+# Fetch price data (replace with actual scraping code)
+def get_trade_data():
+    # Dummy data for example
+    sell_price = 5.00
+    buy_price = 5.50
+    return sell_price, buy_price
+
+# Compare prices and notify user
+async def check_for_deals():
+    sell_price, buy_price = get_trade_data()
+    
+    if sell_price >= buy_price * 0.9 and sell_price <= buy_price * 1.1:
+        channel = client.get_channel(channel_id)
+        user = await client.fetch_user(user_id)
+        # Send a message to the channel and ping the user
+        await channel.send(f"Found a deal! Sell price: ${sell_price}, Buy price: ${buy_price}")
+        await channel.send(f"{user.mention}, check out this deal!")
+
+# Set up scheduled task
+async def start_bot():
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(check_for_deals, 'interval', minutes=5)  # Check every 5 minutes
+    scheduler.start()
+    await client.start("YOUR_BOT_TOKEN")
+
+# Run the bot
+asyncio.run(start_bot())
+
+import requests
+from bs4 import BeautifulSoup
+
+# Function to scrape STN Trading for sell prices
+def get_stn_trading_prices():
+    url = "https://stntrading.eu/"
+    
+    # Send GET request to the STN Trading page
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        print("Failed to retrieve STN Trading page.")
+        return None
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Example: Scrape the item name and sell price
+    items = []
+
+    # Find item listings on the page
+    listings = soup.find_all('div', class_='<div class="mp-cont d-flex flex-row flex-wrap justify-content-center"><a class="mp-item-box-wrap" href="/csgo"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center grey"><p>Counter-Strike 2</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/CSGOBank@1x.webp 768w,/assets/img/responsive/category-icons/CSGOBank@2x.webp 1536w,/assets/img/responsive/category-icons/CSGOBank@3x.webp 1984w,/assets/img/responsive/category-icons/CSGOBank@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/CSGOBank@4x.png" srcset="/assets/img/responsive/category-icons/CSGOBank@1x.png 768w,/assets/img/responsive/category-icons/CSGOBank@2x.png 1536w,/assets/img/responsive/category-icons/CSGOBank@3x.png 1984w,/assets/img/responsive/category-icons/CSGOBank@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/keys"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center red"><p>Keys</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Keys@1x.webp 768w,/assets/img/responsive/category-icons/TF2Keys@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Keys@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Keys@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Keys@4x.png" srcset="/assets/img/responsive/category-icons/TF2Keys@1x.png 768w,/assets/img/responsive/category-icons/TF2Keys@2x.png 1536w,/assets/img/responsive/category-icons/TF2Keys@3x.png 1984w,/assets/img/responsive/category-icons/TF2Keys@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center lightgreen"><p>Items</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Items@1x.webp 768w,/assets/img/responsive/category-icons/TF2Items@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Items@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Items@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Items@4x.png" srcset="/assets/img/responsive/category-icons/TF2Items@1x.png 768w,/assets/img/responsive/category-icons/TF2Items@2x.png 1536w,/assets/img/responsive/category-icons/TF2Items@3x.png 1984w,/assets/img/responsive/category-icons/TF2Items@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/hats"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center lightblue"><p>Hats</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Hats@1x.webp 768w,/assets/img/responsive/category-icons/TF2Hats@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Hats@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Hats@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Hats@4x.png" srcset="/assets/img/responsive/category-icons/TF2Hats@1x.png 768w,/assets/img/responsive/category-icons/TF2Hats@2x.png 1536w,/assets/img/responsive/category-icons/TF2Hats@3x.png 1984w,/assets/img/responsive/category-icons/TF2Hats@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/unusuals"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center purple"><p>Unusuals</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Unusuals@1x.webp 768w,/assets/img/responsive/category-icons/TF2Unusuals@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Unusuals@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Unusuals@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Unusuals@4x.png" srcset="/assets/img/responsive/category-icons/TF2Unusuals@1x.png 768w,/assets/img/responsive/category-icons/TF2Unusuals@2x.png 1536w,/assets/img/responsive/category-icons/TF2Unusuals@3x.png 1984w,/assets/img/responsive/category-icons/TF2Unusuals@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/stranges"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center orange"><p>Stranges</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Stranges@1x.webp 768w,/assets/img/responsive/category-icons/TF2Stranges@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Stranges@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Stranges@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Stranges@4x.png" srcset="/assets/img/responsive/category-icons/TF2Stranges@1x.png 768w,/assets/img/responsive/category-icons/TF2Stranges@2x.png 1536w,/assets/img/responsive/category-icons/TF2Stranges@3x.png 1984w,/assets/img/responsive/category-icons/TF2Stranges@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/weapons"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center yellow"><p>Weapons</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Weapons@1x.webp 768w,/assets/img/responsive/category-icons/TF2Weapons@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Weapons@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Weapons@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Weapons@4x.png" srcset="/assets/img/responsive/category-icons/TF2Weapons@1x.png 768w,/assets/img/responsive/category-icons/TF2Weapons@2x.png 1536w,/assets/img/responsive/category-icons/TF2Weapons@3x.png 1984w,/assets/img/responsive/category-icons/TF2Weapons@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/vintages"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center darkblue"><p>Vintages</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Vintages@1x.webp 768w,/assets/img/responsive/category-icons/TF2Vintages@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Vintages@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Vintages@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Vintages@4x.png" srcset="/assets/img/responsive/category-icons/TF2Vintages@1x.png 768w,/assets/img/responsive/category-icons/TF2Vintages@2x.png 1536w,/assets/img/responsive/category-icons/TF2Vintages@3x.png 1984w,/assets/img/responsive/category-icons/TF2Vintages@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/genuines"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center darkgreen"><p>Genuines</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Genuines@1x.webp 768w,/assets/img/responsive/category-icons/TF2Genuines@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Genuines@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Genuines@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Genuines@4x.png" srcset="/assets/img/responsive/category-icons/TF2Genuines@1x.png 768w,/assets/img/responsive/category-icons/TF2Genuines@2x.png 1536w,/assets/img/responsive/category-icons/TF2Genuines@3x.png 1984w,/assets/img/responsive/category-icons/TF2Genuines@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/skins"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center weirdwhite"><p>TF2 Skins</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/SkinBanking@1x.webp 768w,/assets/img/responsive/category-icons/SkinBanking@2x.webp 1536w,/assets/img/responsive/category-icons/SkinBanking@3x.webp 1984w,/assets/img/responsive/category-icons/SkinBanking@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/SkinBanking@4x.png" srcset="/assets/img/responsive/category-icons/SkinBanking@1x.png 768w,/assets/img/responsive/category-icons/SkinBanking@2x.png 1536w,/assets/img/responsive/category-icons/SkinBanking@3x.png 1984w,/assets/img/responsive/category-icons/SkinBanking@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/scrapweapons"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center scrapbrown"><p>ScrapWeapons</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2ScrapWeapons@1x.webp 768w,/assets/img/responsive/category-icons/TF2ScrapWeapons@2x.webp 1536w,/assets/img/responsive/category-icons/TF2ScrapWeapons@3x.webp 1984w,/assets/img/responsive/category-icons/TF2ScrapWeapons@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2ScrapWeapons@4x.png" srcset="/assets/img/responsive/category-icons/TF2ScrapWeapons@1x.png 768w,/assets/img/responsive/category-icons/TF2ScrapWeapons@2x.png 1536w,/assets/img/responsive/category-icons/TF2ScrapWeapons@3x.png 1984w,/assets/img/responsive/category-icons/TF2ScrapWeapons@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/tf2/killstreaks"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center killstreakgreen"><p>Killstreaks</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/TF2Killstreaks@1x.webp 768w,/assets/img/responsive/category-icons/TF2Killstreaks@2x.webp 1536w,/assets/img/responsive/category-icons/TF2Killstreaks@3x.webp 1984w,/assets/img/responsive/category-icons/TF2Killstreaks@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/TF2Killstreaks@4x.png" srcset="/assets/img/responsive/category-icons/TF2Killstreaks@1x.png 768w,/assets/img/responsive/category-icons/TF2Killstreaks@2x.png 1536w,/assets/img/responsive/category-icons/TF2Killstreaks@3x.png 1984w,/assets/img/responsive/category-icons/TF2Killstreaks@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a><a class="mp-item-box-wrap" href="/sell"><div class="mp-cat-bx shadow d-flex flex-column justify-content-center sellbpgreen"><p>Sell TF2 Items</p><picture class="d-flex justify-content-center"><source type="image/webp" srcset="/assets/img/responsive/category-icons/backpackExpander@1x.webp 768w,/assets/img/responsive/category-icons/backpackExpander@2x.webp 1536w,/assets/img/responsive/category-icons/backpackExpander@3x.webp 1984w,/assets/img/responsive/category-icons/backpackExpander@4x.webp 3600w"><img src="/assets/img/responsive/category-icons/backpackExpander@4x.png" srcset="/assets/img/responsive/category-icons/backpackExpander@1x.png 768w,/assets/img/responsive/category-icons/backpackExpander@2x.png 1536w,/assets/img/responsive/category-icons/backpackExpander@3x.png 1984w,/assets/img/responsive/category-icons/backpackExpander@4x.png 3600w" width="150" height="150" loading="lazy"></picture></div></a></div>')  # Adjust class name as needed
+
+    for listing in listings:
+        # Extract item name and sell price from the HTML structure
+        item_name = listing.find('div', class_='item-name').text.strip()  # Adjust tag/class name
+        item_price_str = listing.find('span', class_='price').text.strip()  # Adjust tag/class name
+
+        # Clean price and convert to float
+        item_price = float(item_price_str.replace('$', '').replace(',', '').strip())
+        
+        # Add the item and its price to the list
+        items.append({'name': item_name, 'price': item_price})
+
+    return items
+
+
+# Function to scrape Backpack.tf for buy prices
+def get_backpack_tf_prices():
+    url = "https://backpack.tf/classifieds"
+
+    # Send GET request to Backpack.tf page
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        print("Failed to retrieve Backpack.tf page.")
+        return None
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+
+
+
+# Function to compare prices and notify if a deal is found
+def compare_prices():
+    # Get prices from both websites
+    stn_items = get_stn_trading_prices()
+    backpack_items = get_backpack_tf_prices()
+
+    if not stn_items or not backpack_items:
+        print("Error fetching data.")
+        return
+
+    for stn_item in stn_items:
+        for backpack_item in backpack_items:
+            if stn_item['name'].lower() == backpack_item['name'].lower():  # Match item names (case insensitive)
+                sell_price = stn_item['price']
+                buy_price = backpack_item['price']
+                
+                # Calculate if the sell price is within 10% of the buy price
+                if sell_price >= buy_price * 0.9 and sell_price <= buy_price * 1.1:
+                    print(f"Deal found! Item: {stn_item['name']}")
+                    print(f"Sell price: ${sell_price}, Buy price: ${buy_price}")
+                    # Here, you can integrate the bot's notification to the client
+                    # e.g., send message via Discord bot
+                    print("Sending notification...")
+
+# Run the comparison function
+if __name__ == "__main__":
+    compare_prices()
+
+    import discord
+
+client = discord.Client()
+
+@client.event
+async def on_ready():
+    print(f'Logged in as {client.user}')
+
+    # Example: notify when a deal is found
+    await send_notification("Found a good deal!")
+
+# Function to send notification to Discord
+async def send_notification(message):
+    channel = client.get_channel(1311295325499166743)  # Replace with your channel ID
+    await channel.send(message)
+
+import discord
+from discord.ext import commands
+
+# Create a bot instance with a command prefix
+bot = commands.Bot(command_prefix="!")
+
+# Create intents object with the required events enabled
+intents = discord.Intents.default()  # Default intents, which are most common
+intents.messages = True  # Enables the message-related events (on_message, etc.)
+
+
+# Event when the bot is ready
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}")
+
+# Run the bot using your token
+bot.run('bot token')
+
+client.run('bot token')  # Replace with your bot token
+
+
+
